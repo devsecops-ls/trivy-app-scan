@@ -19,5 +19,5 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz && tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
       - name: Run Scan
         run: |
-          ./trivy --exit-code 0 --severity HIGH --no-progress vulnerable-app 
-          ./trivy --exit-code 1 --severity CRITICAL --no-progress vulnerable-app
+          ./trivy image --exit-code 0 --severity HIGH --no-progress vulnerable-app 
+          ./trivy image --exit-code 1 --severity CRITICAL --no-progress vulnerable-app
