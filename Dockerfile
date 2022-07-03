@@ -1,15 +1,8 @@
-FROM python:2.7.14-jessie
-
-WORKDIR /apps/
-
-COPY app/ /apps/
-
-WORKDIR /apps/
-
-RUN pip install -U pip setuptools && pip install -r /apps/requirements.txt
-
-EXPOSE 5050
-
+FROM python:3.6
+LABEL maintainer="lorenz.vanthillo@gmail.com"
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+EXPOSE 8080
 ENTRYPOINT ["python"]
-
-CMD ["app.py"]
+CMD ["app/app.py"]
