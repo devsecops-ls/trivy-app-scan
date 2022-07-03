@@ -1,0 +1,30 @@
+name: ZAP-Test
+
+on:
+  push: 
+    branches:
+        - master
+        - main
+
+jobs: 
+  build: 
+    runs-on: ubuntu-18.04
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.7.9
+     	uses: actions/setup-python@v2
+	with:
+	    python-version: 3.7.9
+      - name: Install Python dependencies
+      - name: Build Image
+        run: docker build -t vulnerable-app .
+      - name: Install Trivy
+	run: |
+	     export VERSION=$(curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+             wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
+	     tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
+      - name: Run Trivy
+        run: |
+            ./trivy --exit-code 0 --severity HIGH --no-progress vulnerable-app 
+            ./trivy --exit-code 1 --severity CRITICAL --no-progress vulnerable-app
+	    
