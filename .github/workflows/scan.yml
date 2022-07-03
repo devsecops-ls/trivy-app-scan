@@ -11,10 +11,13 @@ jobs:
     runs-on: ubuntu-18.04
     steps: 
       - uses: actions/checkout@v2
-      - name: Setup Python 3.7.9
       - name: Build Image
         run: docker build -t vulnerable-app .
       - name: Get Trivy latest release TAG
         run:  export VERSION=$(curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
       - name: Get Trivy
         run: wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz && tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
+      - name: Run Scan
+        run: |
+          ./trivy --exit-code 0 --severity HIGH --no-progress vulnerable-app 
+          ./trivy --exit-code 1 --severity CRITICAL --no-progress vulnerable-app
