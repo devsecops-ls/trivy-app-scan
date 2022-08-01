@@ -6,6 +6,10 @@ on:
         - master
         - main
 
+env:
+    TRIVY_RELEASE: "https://api.github.com/repos/aquasecurity/trivy/releases/latest" 
+    TRIVY_DOWNLOAD_URL: "https://github.com/aquasecurity/trivy/releases/download"
+
 jobs: 
   run: 
     runs-on: ubuntu-18.04
@@ -15,8 +19,8 @@ jobs:
         run: docker build -t vulnerable-container .
       - name: Get Trivy 
         run: |
-          export VERSION=$(curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
-          wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz && tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
+          export VERSION=$(curl --silent ${{env.TRIVY_RELEASE}} | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget ${{env.TRIVY_DOWNLOAD_URL}}/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz && tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
       - name: Run Scan
         run: |
           ./trivy image --exit-code 0 --severity HIGH --no-progress vulnerable-container 
